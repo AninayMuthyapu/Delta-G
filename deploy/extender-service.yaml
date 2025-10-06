@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blind-gpu-scheduler
+  namespace: blind-gpu-scheduler
+spec:
+  selector:
+    app: blind-gpu-scheduler
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
