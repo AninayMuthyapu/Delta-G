@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-gpu-job
+  namespace: default
+  annotations:
+    attestation-hash.my-company.com/required-hash: "abc123"
+spec:
+  restartPolicy: Never
+  containers:
+  - name: trainer
+    image: nvidia/cuda:12.2.0-base-ubuntu22.04
+    command: ["bash", "-lc", "nvidia-smi || true; echo running"]
+    resources:
+      limits:
+        nvidia.com/gpu: 1
