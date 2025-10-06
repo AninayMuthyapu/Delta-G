@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blind-gpu-scheduler
+  namespace: blind-gpu-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blind-gpu-scheduler
+  template:
+    metadata:
+      labels:
+        app: blind-gpu-scheduler
+    spec:
+      serviceAccountName: blind-gpu-scheduler
+      containers:
+        - name: extender
+          image: ghcr.io/your-org/blind-gpu-scheduler:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: BGS_LISTEN_ADDR
+              value: ":8000"
+            - name: BGS_REQUIRED_ANNOTATION
+              value: "attestation-hash.my-company.com/required-hash"
+            - name: BGS_NODE_HASH_MAP
+              value: '{"kind-worker":"abc123"}'
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
